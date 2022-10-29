@@ -60,11 +60,11 @@ public class MoveAction : BaseAction
                 var offsetGridPosition=new GridPosition(x,z);
                 var testGridPosition=unitGridPosition+offsetGridPosition;
 
+                // if (unitGridPosition==testGridPosition)
+                // {
+                //     continue;
+                // }
                 if (!LevelGrid.instance.IsVelidGridPosition(testGridPosition))
-                {
-                    continue;
-                }
-                if (unitGridPosition==testGridPosition)
                 {
                     continue;
                 }
