@@ -5,15 +5,13 @@ using UnityEngine;
 
 public class MoveAction : BaseAction
 {   
-    [SerializeField] Animator myAnimator=null;
     [SerializeField] int maxMoveDistance=4;
     [SerializeField] private float myRotationSpeed=10;
-    private int isWalking=Animator.StringToHash("IsWalking");
     private float moveSpeed=4f;
     private Vector3 targetPostion;
 
     public Action OnActionCompleted { get; private set; }
-
+    public event EventHandler OnStartMoving,OnStopMoving;
     protected override void Awake()
     {
         base.Awake();
@@ -22,9 +20,9 @@ public class MoveAction : BaseAction
     
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        this.OnActionCompleted=onActionComplete;
-        isActive=true;
+        ActionStart(onActionComplete);
         this.targetPostion=LevelGrid.instance.GetWorldPosition(gridPosition);
+        OnStartMoving?.Invoke(this,EventArgs.Empty);
     }
     
     private void Update()
@@ -38,20 +36,18 @@ public class MoveAction : BaseAction
         if (Vector3.Distance(transform.position,targetPostion)>.1f)
         {
             transform.position+=moveDirection * Time.deltaTime *moveSpeed; 
-            myAnimator.SetBool(isWalking,true);           
         }
         else
         {
-            myAnimator.SetBool(isWalking,false);     
-            OnActionCompleted();
-            isActive=false;
+            ActionCompleted();
+            OnStopMoving?.Invoke(this,EventArgs.Empty);
         }
         transform.forward=Vector3.Lerp(transform.forward,moveDirection,Time.deltaTime*myRotationSpeed);
     }
     public override List<GridPosition> GetValidActionGridPositionList()
     {
         var gridPositionList=new List<GridPosition>();
-        var unitGridPosition=unit.gridPosition;
+        var unitGridPosition=unit.GetGirdPosition;
 
         for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
         {
@@ -60,10 +56,6 @@ public class MoveAction : BaseAction
                 var offsetGridPosition=new GridPosition(x,z);
                 var testGridPosition=unitGridPosition+offsetGridPosition;
 
-                // if (unitGridPosition==testGridPosition)
-                // {
-                //     continue;
-                // }
                 if (!LevelGrid.instance.IsVelidGridPosition(testGridPosition))
                 {
                     continue;
@@ -73,7 +65,6 @@ public class MoveAction : BaseAction
                     continue;
                 }
                 gridPositionList.Add(testGridPosition);
-                // Debug.Log(testGridPosition);
             }
         }
 

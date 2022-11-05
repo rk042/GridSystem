@@ -10,6 +10,7 @@ public class UnitActionSystem : MonoBehaviour
     public event EventHandler OnSelectUnitChange;
     public event EventHandler OnSelectedActionChange;
     public event EventHandler<bool> OnBusyChange;
+    public event EventHandler OnActionStarted;
 
     [SerializeField] Unit selectedUnit;
     [SerializeField] LayerMask layerMask;
@@ -29,6 +30,7 @@ public class UnitActionSystem : MonoBehaviour
     private void Update()
     {
         if(isBusy)return;
+        if(!TurnSystem.instance.IsPlayerTurn()) return;
         if(EventSystem.current.IsPointerOverGameObject()) return;
         if(TryHandleUnitSelection())return;
         HandleSelectedAction();
@@ -48,6 +50,11 @@ public class UnitActionSystem : MonoBehaviour
                     {
                         return false;
                     }
+                    if (selectObject.IsEnemy())
+                    {
+                        return false;
+                    }
+
                     SetSelectedUnit(selectObject);
                     return true;
                 }
@@ -91,8 +98,13 @@ public class UnitActionSystem : MonoBehaviour
 
             if (selectedAction.IsValidActionGridPosition(mouseGridPosition))
             { 
-                SetBusy();
-                selectedAction.TakeAction(mouseGridPosition,Clearbusy);
+                if(selectedUnit.TrySpendActionPointsToTakeAction(selectedAction))
+                {
+                    SetBusy();
+                    selectedAction.TakeAction(mouseGridPosition,Clearbusy);
+
+                    OnActionStarted?.Invoke(this,EventArgs.Empty);
+                }
             }
         }
     }

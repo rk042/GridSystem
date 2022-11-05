@@ -6,8 +6,6 @@ using UnityEngine;
 public class SpinAction : BaseAction
 {
     public System.Action SpinCompleteDelegate;
-
-    private System.Action SpinComplete;
     private float totalSpin;
 
     void Update()
@@ -23,8 +21,7 @@ public class SpinAction : BaseAction
 
         if (totalSpin>=360f)
         {
-            isActive=false;
-            SpinComplete();
+            ActionCompleted();
         }
     }
     public override string GetActionName()
@@ -34,13 +31,17 @@ public class SpinAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        this.SpinComplete=onActionComplete;
+        ActionStart(onActionComplete);
         totalSpin=0;
-        isActive=true;
     }
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
-        return new List<GridPosition>{unit.gridPosition};
+        return new List<GridPosition>{unit.GetGirdPosition};
+    }
+
+    public override int GetActionPointsCost()
+    {
+        return 2;
     }
 }
