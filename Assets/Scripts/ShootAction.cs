@@ -63,7 +63,7 @@ public class ShootAction : BaseAction
             targetUnit=targetUnit,
             shootUnit=unit
         });
-        targetUnit.Damage();
+        targetUnit.Damage(10);
     }
 
     private void NextState()
