@@ -47,7 +47,6 @@ public class ShootAction : BaseAction
                 }
                 break;
             case State.Cooloff:
-                
                 break;
         }
         if (stateTimer<=0)
@@ -58,7 +57,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
-        OnShootTrigger?.Invoke(null,new ShootActionArg
+        OnShootTrigger?.Invoke(this,new ShootActionArg
         {
             targetUnit=targetUnit,
             shootUnit=unit
@@ -129,10 +128,15 @@ public class ShootAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        ActionStart(onActionComplete);
         targetUnit=LevelGrid.instance.GetUnitAtGridPosition(gridPosition);
         canShootBool=true;
         state=State.Aiming;
-        stateTimer=1f;
+        stateTimer=2f;
+        ActionStart(onActionComplete);
+    }
+
+    public Unit GetTargetUnit()
+    {
+        return targetUnit;
     }
 }
