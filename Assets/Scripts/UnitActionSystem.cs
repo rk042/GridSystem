@@ -67,7 +67,7 @@ public class UnitActionSystem : MonoBehaviour
     private void SetSelectedUnit(Unit selectObject)
     {
         selectedUnit = selectObject;
-        SetSelectedAction(selectObject.moveAction);
+        SetSelectedAction(selectObject.GetAction<MoveAction>());
         OnSelectUnitChange?.Invoke(this,EventArgs.Empty);
     }
 

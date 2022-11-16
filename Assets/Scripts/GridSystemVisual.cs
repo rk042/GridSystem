@@ -7,8 +7,28 @@ public class GridSystemVisual : MonoBehaviour
 {
     public static GridSystemVisual instance {get;private set;}
     [SerializeField] Transform gridSystemVisualSinglePrefab;
+    [SerializeField] List<GridVisualTypeMaterial> gridVisualTypeMaterialsList=new List<GridVisualTypeMaterial>();
+
     GridSystemVisualSingle[,] gridSystemVisualSinglesArray;
     
+    [System.Serializable]
+    public struct GridVisualTypeMaterial
+    {
+        public GridVisualType gridVisualType;
+        public Material material;
+    }
+
+    public enum GridVisualType
+    {
+        White,
+        Blue,
+        Red,
+        RedSoft,
+        Yellow
+    }
+
+
+
     private void Awake()
     {
         instance=this;
@@ -25,8 +45,43 @@ public class GridSystemVisual : MonoBehaviour
                gridSystemVisualSinglesArray[x,z]=myObject.GetComponent<GridSystemVisualSingle>();
             }
         }    
+
+        UnitActionSystem.Instance.OnSelectedActionChange+=OnSelectedActionChange;
+        LevelGrid.instance.OnAnyUnitMovedGridPosition+=OnAnyUnitMovedGridPosition;
+
+        UpdateGridVisual();
     }
-    private void Update()
+
+    private void ShowGridPositionRange(GridPosition gridPosition,int range,GridVisualType gridVisualType)
+    {
+        List<GridPosition> gridPositionsList =new List<GridPosition>();
+
+        for (int x = -range ; x <= range; x++)
+        {
+            for (int z = -range ; z <= range; z++)
+            {
+                var testGridPosition=gridPosition+new GridPosition(x,z);
+                int testDistnace=Mathf.Abs(x)+Mathf.Abs(z);
+                if (testDistnace>range)
+                {
+                    continue;
+                }
+                if (!LevelGrid.instance.IsVelidGridPosition(testGridPosition))
+                {
+                    continue;
+                }
+                gridPositionsList.Add(testGridPosition);
+            }
+        }
+
+        ShowGridPositionList(gridPositionsList,gridVisualType);
+    }
+    private void OnAnyUnitMovedGridPosition(object sender, EventArgs e)
+    {
+        UpdateGridVisual();
+    }
+
+    private void OnSelectedActionChange(object sender, EventArgs e)
     {
         UpdateGridVisual();
     }
@@ -34,7 +89,25 @@ public class GridSystemVisual : MonoBehaviour
     private void UpdateGridVisual()
     {
         HideAllGridPosition();
-        ShowGridPositionList(UnitActionSystem.Instance.GetSelectedAction.GetValidActionGridPositionList());
+        var selectedUnit = UnitActionSystem.Instance.GetSelectUnit();
+        BaseAction getSelectedAction = UnitActionSystem.Instance.GetSelectedAction;
+        GridVisualType gridVisualType;
+        switch (getSelectedAction)
+        {
+            default:
+            case MoveAction moveAction:
+                gridVisualType=GridVisualType.White;
+                break;
+            case SpinAction spinAction:
+                gridVisualType=GridVisualType.Blue;
+                break;
+            case ShootAction shootAction:
+                gridVisualType=GridVisualType.Red;
+                ShowGridPositionRange(selectedUnit.GetGirdPosition,shootAction.GetShootMaxRange(),GridVisualType.RedSoft);
+                break;            
+        }
+
+        ShowGridPositionList(getSelectedAction.GetValidActionGridPositionList(),gridVisualType);
     }
 
     public void HideAllGridPosition()
@@ -48,11 +121,24 @@ public class GridSystemVisual : MonoBehaviour
         } 
     }
 
-    public void ShowGridPositionList(List<GridPosition> gridPositionsList)
+    public void ShowGridPositionList(List<GridPosition> gridPositionsList,GridVisualType gridVisualType)
     {
         for (int g = 0; g < gridPositionsList.Count; g++)
         {
-            gridSystemVisualSinglesArray[gridPositionsList[g].x,gridPositionsList[g].z].Show();
+            gridSystemVisualSinglesArray[gridPositionsList[g].x,gridPositionsList[g].z].Show(GetGridVisualTypeMaterial(gridVisualType));
         }
+    }
+
+    public Material GetGridVisualTypeMaterial(GridVisualType gridVisualType)
+    {
+        foreach (var item in gridVisualTypeMaterialsList)
+        {
+            if (item.gridVisualType==gridVisualType)
+            {
+                return item.material;
+            }
+        }
+
+        return null;
     }
 }

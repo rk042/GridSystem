@@ -75,4 +75,13 @@ public class MoveAction : BaseAction
     {
         return "MoveAction";
     }
+
+    protected override EnemyAIAction GetEnemyAIAction(GridPosition item)
+    {
+        var targetCountAtGridPosition = unit.GetAction<ShootAction>().GetTargetCountAtPosition(item);
+        return new EnemyAIAction{
+            gridPosition=item,
+            actionValue=targetCountAtGridPosition*10
+        };
+    }
 }

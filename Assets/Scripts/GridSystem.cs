@@ -2,26 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridSystem
+public class GridSystem<TGridObject>
 {
     private int width;
     public int GetWidth=>width;
     private int height;
     public int GetHeight=>height;
     private float cellSize;
-    private GridObject[,] gridObjectArray;
-    public GridSystem(int wid,int hei,float cellSize)
+    private TGridObject[,] gridObjectArray;
+    public GridSystem(int wid,int hei,float cellSize,System.Func<GridSystem<TGridObject>,GridPosition,TGridObject> createGridObject)
     {
         width=wid;
         height=hei;
         this.cellSize=cellSize;
-        gridObjectArray=new GridObject[wid,hei];
+        gridObjectArray=new TGridObject[wid,hei];
 
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
             {
-                gridObjectArray[x,z] = new GridObject(this,new GridPosition(x,z));
+                gridObjectArray[x,z] = createGridObject(this,new GridPosition(x,z));
                 Debug.DrawLine(GetWorldPosition(new GridPosition(x,z)),GetWorldPosition(new GridPosition(x,z)) + Vector3.right * .2f,Color.white,float.MaxValue);
             }
         }
@@ -41,7 +41,7 @@ public class GridSystem
         );
     }
 
-    public GridObject GetGridObject(GridPosition gridPosition)
+    public TGridObject GetGridObject(GridPosition gridPosition)
     {
         return gridObjectArray[gridPosition.x,gridPosition.z];
     }
