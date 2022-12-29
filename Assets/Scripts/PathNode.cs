@@ -6,58 +6,77 @@ using UnityEngine;
 public class PathNode
 {
     private GridPosition gridPosition;
-    private int gCost,fCost,hCost;
+    private int gCost;
+    private int hCost;
+    private int fCost;
     private PathNode cameFromPathNode;
-    
+    private bool isWalkable=true;
+    public bool IsWalkable()
+    {
+        return isWalkable;
+    }
+    public void SetWalkable(bool isWalkable)
+    {
+        this.isWalkable=isWalkable;
+    }
     public PathNode(GridPosition gridPosition)
     {
         this.gridPosition = gridPosition;
     }
 
-    internal void SetGCost(int gCost)
+    public override string ToString()
     {
-        this.gCost=gCost;
+        return gridPosition.ToString();
     }
 
-    internal void SetHCost(int hCost)
-    {
-        this.hCost=hCost;
-    }
-    
-    internal int GetFCost()
-    {
-        return fCost;
-    }
-    internal void CalculateFCost()
-    {
-        this.fCost=gCost+hCost;
-    }
-
-    internal void ResetCameFromPathNode()
-    {
-        cameFromPathNode=null;
-    }
-
-    internal GridPosition GetCurrentPosition()
-    {
-       return gridPosition;
-    }
-    internal int GetGCost()
+    public int GetGCost()
     {
         return gCost;
     }
-    internal int GetHCost()
+
+    public int GetHCost()
     {
         return hCost;
     }
 
-    internal void SetCameFromPathNode(PathNode currenNode)
+    public int GetFCost()
     {
-        cameFromPathNode=currenNode;
+        return fCost;
     }
 
-    internal PathNode GetCameFromPathNode()
+     public void SetGCost(int gCost)
+    {
+        this.gCost = gCost;
+    }
+
+    public void SetHCost(int hCost)
+    {
+        this.hCost = hCost;
+    }
+
+    public void CalculateFCost()
+    {
+        fCost = gCost + hCost;
+    }
+
+    public void ResetCameFromPathNode()
+    {
+        cameFromPathNode = null;
+    }
+
+    public void SetCameFromPathNode(PathNode pathNode)
+    {
+        cameFromPathNode = pathNode;
+    }
+
+    public PathNode GetCameFromPathNode()
     {
         return cameFromPathNode;
     }
+
+    public GridPosition GetGridPosition()
+    {
+        return gridPosition;
+    }
+
 }

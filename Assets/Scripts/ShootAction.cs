@@ -18,6 +18,8 @@ public class ShootAction : BaseAction
     private Unit targetUnit;
     private bool canShootBool;
     private float shootSpeed=10f;
+    [SerializeField] private LayerMask obstacleLayerMask;
+
     public event EventHandler<ShootActionArg> OnShootTrigger;
 
     public class ShootActionArg : EventArgs
@@ -120,6 +122,15 @@ public class ShootAction : BaseAction
                 }
                 var targetUnit=LevelGrid.instance.GetUnitAtGridPosition(testGridPosition);
                 if (targetUnit.IsEnemy() == unit.IsEnemy())
+                {
+                    continue;
+                }
+                Vector3 unitWorldPosition=LevelGrid.instance.GetWorldPosition(unitGridPosition);
+                Vector3 shootDir=(targetUnit.GetWorldPosition()-unitWorldPosition).normalized;
+                var unitShouldHeight=1.7f;
+                var rayHit=Physics.Raycast(unitWorldPosition+Vector3.up*unitShouldHeight,shootDir,Vector3.Distance(unitWorldPosition,targetUnit.GetWorldPosition()),
+                    obstacleLayerMask);
+                if (rayHit)
                 {
                     continue;
                 }

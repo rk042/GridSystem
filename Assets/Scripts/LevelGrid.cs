@@ -16,7 +16,14 @@ public class LevelGrid : MonoBehaviour
         instance=this;
         gridSystem=new GridSystem<GridObject>(10,10,2,(GridSystem<GridObject> g,GridPosition gridPosition)=>new GridObject(g,gridPosition));
     }
-
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    private void Start()
+    {
+        PathFinding.Instance.Setup(10,10,2);
+    }
     public void AddUnitAtGridPosition(GridPosition gridPosition,Unit unit)
     {
         gridSystem.GetGridObject(gridPosition).unitList.Add(unit);
