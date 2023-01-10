@@ -20,6 +20,7 @@ public class ShootAction : BaseAction
     private float shootSpeed=10f;
     [SerializeField] private LayerMask obstacleLayerMask;
 
+    public static event EventHandler<ShootActionArg> OnAnyActionShoot;
     public event EventHandler<ShootActionArg> OnShootTrigger;
 
     public class ShootActionArg : EventArgs
@@ -60,6 +61,11 @@ public class ShootAction : BaseAction
     private void Shoot()
     {
         OnShootTrigger?.Invoke(this,new ShootActionArg
+        {
+            targetUnit=targetUnit,
+            shootUnit=unit
+        });
+        OnAnyActionShoot?.Invoke(this,new ShootActionArg
         {
             targetUnit=targetUnit,
             shootUnit=unit
