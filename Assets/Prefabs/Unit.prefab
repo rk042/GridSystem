@@ -2730,6 +2730,7 @@ GameObject:
   - component: {fileID: 103391987100484577}
   - component: {fileID: 8548948832719818572}
   - component: {fileID: -2977023856235867161}
+  - component: {fileID: 6005733226055855360}
   m_Layer: 7
   m_Name: Unit
   m_TagString: Untagged
@@ -2884,6 +2885,18 @@ MonoBehaviour:
     m_Bits: 256
   grenadeProjectilePrefab: {fileID: 7357545925737599822, guid: 2113b550a7b77f0408040562f64776a2,
     type: 3}
+--- !u!114 &6005733226055855360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5474005581629644268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d2e96f67583cc24f94df9c78d664ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6184012231900754542
 GameObject:
   m_ObjectHideFlags: 0

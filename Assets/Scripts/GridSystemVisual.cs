@@ -76,6 +76,26 @@ public class GridSystemVisual : MonoBehaviour
 
         ShowGridPositionList(gridPositionsList,gridVisualType);
     }
+    private void ShowGridPositionRangeSquare(GridPosition gridPosition,int range,GridVisualType gridVisualType)
+    {
+        List<GridPosition> gridPositionsList =new List<GridPosition>();
+
+        for (int x = -range ; x <= range; x++)
+        {
+            for (int z = -range ; z <= range; z++)
+            {
+                var testGridPosition=gridPosition+new GridPosition(x,z);
+                int testDistnace=Mathf.Abs(x)+Mathf.Abs(z);
+                if (testDistnace>range)
+                {
+                    continue;
+                }
+                gridPositionsList.Add(testGridPosition);
+            }
+        }
+
+        ShowGridPositionList(gridPositionsList,gridVisualType);
+    }
     private void OnAnyUnitMovedGridPosition(object sender, EventArgs e)
     {
         UpdateGridVisual();
@@ -105,6 +125,15 @@ public class GridSystemVisual : MonoBehaviour
                 gridVisualType=GridVisualType.Red;
                 ShowGridPositionRange(selectedUnit.GetGirdPosition,shootAction.GetShootMaxRange(),GridVisualType.RedSoft);
                 break;            
+            case GranadeAction granadeAction:
+                gridVisualType=GridVisualType.Yellow;
+                ShowGridPositionRange(selectedUnit.GetGirdPosition,granadeAction.GetShootMaxRange(),GridVisualType.RedSoft);
+                break;            
+            case SwardAction swardAction:
+                gridVisualType=GridVisualType.Red;
+                ShowGridPositionRangeSquare(selectedUnit.GetGirdPosition,swardAction.GetShootMaxRange(),GridVisualType.RedSoft);
+                Debug.Log($"");
+                break;
         }
 
         ShowGridPositionList(getSelectedAction.GetValidActionGridPositionList(),gridVisualType);

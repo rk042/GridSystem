@@ -9,6 +9,10 @@ public class GranadeAction : BaseAction
     [SerializeField] LayerMask obstacleLayerMask;
     [SerializeField] GranadeProjectTile grenadeProjectilePrefab;
     
+    public int GetShootMaxRange()
+    {
+        return maxThrowDistance;
+    }
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
