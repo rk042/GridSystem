@@ -5,7 +5,17 @@ using UnityEngine;
 
 public class SwardAction : BaseAction
 {
+    enum State
+    {
+        SwingingSwordBeforeHit,
+        SwingingSwordAfterHit,
+    }
+
     private int maxSwardDistance=1;
+    private State state;
+    private float stateTimer;
+    private Unit targetUnit;
+
     public int GetShootMaxRange()
     {
         return maxSwardDistance;
@@ -46,15 +56,6 @@ public class SwardAction : BaseAction
                 {
                     continue;
                 }
-                if (!LevelGrid.instance.HasAnyUnitOnGridPosition(testGridPosition))
-                {
-                    continue;
-                }
-                var targetUnit=LevelGrid.instance.GetUnitAtGridPosition(testGridPosition);
-                if (targetUnit.IsEnemy() == unit.IsEnemy())
-                {
-                    continue;
-                }
                 gridPositionList.Add(testGridPosition);
             }
         }
@@ -70,6 +71,10 @@ public class SwardAction : BaseAction
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         Debug.Log($"sward Action");
+        targetUnit=LevelGrid.instance.GetUnitAtGridPosition(gridPosition);
+        state=State.SwingingSwordAfterHit;  
+        float afterHitStateTime=0.7f;
+        stateTimer=afterHitStateTime;      
         ActionStart(onActionComplete);
     }
 
@@ -98,7 +103,35 @@ public class SwardAction : BaseAction
         {
             return;
         }
-
-        ActionCompleted();
+        stateTimer-=Time.deltaTime;
+        switch (state)
+        {
+            case State.SwingingSwordAfterHit:
+                break;
+            case State.SwingingSwordBeforeHit:
+                var aimDirection=(targetUnit.GetWorldPosition()-unit.GetWorldPosition()).normalized;
+                float shootSpeed = 10;
+                transform.forward=Vector3.Lerp(transform.forward,aimDirection,Time.deltaTime*shootSpeed);
+                break;
+        }
+        if (stateTimer<=0)
+        {
+            NextState();
+        }
+    }
+    private void NextState()
+    {
+        switch (state)
+        {
+            case State.SwingingSwordAfterHit:                
+                ActionCompleted();
+                break;
+            case State.SwingingSwordBeforeHit:       
+                state=State.SwingingSwordAfterHit;  
+                float afterHitStateTime=0.5f;
+                stateTimer=afterHitStateTime;   
+                targetUnit.Damage(100);   
+                break;
+        }
     }
 }

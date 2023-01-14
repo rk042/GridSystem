@@ -85,8 +85,8 @@ public class GridSystemVisual : MonoBehaviour
             for (int z = -range ; z <= range; z++)
             {
                 var testGridPosition=gridPosition+new GridPosition(x,z);
-                int testDistnace=Mathf.Abs(x)+Mathf.Abs(z);
-                if (testDistnace>range)
+        
+                if (!LevelGrid.instance.IsVelidGridPosition(testGridPosition))
                 {
                     continue;
                 }
@@ -131,8 +131,8 @@ public class GridSystemVisual : MonoBehaviour
                 break;            
             case SwardAction swardAction:
                 gridVisualType=GridVisualType.Red;
-                ShowGridPositionRangeSquare(selectedUnit.GetGirdPosition,swardAction.GetShootMaxRange(),GridVisualType.RedSoft);
-                Debug.Log($"");
+                ShowGridPositionRange(selectedUnit.GetGirdPosition,swardAction.GetShootMaxRange(),GridVisualType.RedSoft);
+                // ShowGridPositionRangeSquare(selectedUnit.GetGirdPosition,swardAction.GetShootMaxRange(),GridVisualType.RedSoft);
                 break;
         }
 
